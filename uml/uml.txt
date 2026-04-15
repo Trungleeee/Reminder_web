@@ -1,0 +1,44 @@
+@startuml
+left to right direction
+
+actor Guest
+actor User
+actor Admin
+
+User --|> Guest
+
+rectangle "Hệ thống Reminder" {
+
+  Guest --> (Đăng ký tài khoản)
+  Guest --> (Đăng nhập)
+
+  User --> (Tạo Task)
+  User --> (Cập nhật Task)
+  User --> (Xóa Task)
+  User --> (Xem danh sách Task)
+  User --> (Đánh dấu hoàn thành)
+  User --> (Nhận thông báo)
+  User --> (Thiết lập mức độ ưu tiên)
+  User --> (Lọc / sắp xếp Task)
+  User --> (Thiết lập thời gian nhắc nhở)
+  User --> (Tìm kiếm Task)
+
+  Admin --> (Xem người dùng)
+  Admin --> (Quản lý người dùng)
+
+  (Tạo Task) .> (Đăng nhập) : <<include>>
+  (Cập nhật Task) .> (Đăng nhập) : <<include>>
+  (Xóa Task) .> (Đăng nhập) : <<include>>
+  (Xem danh sách Task) .> (Đăng nhập) : <<include>>
+  (Đánh dấu hoàn thành) .> (Đăng nhập) : <<include>>
+  (Nhận thông báo) .> (Đăng nhập) : <<include>>
+  (Thiết lập mức độ ưu tiên) .> (Đăng nhập) : <<include>>
+  (Lọc / sắp xếp Task) .> (Đăng nhập) : <<include>>
+  (Thiết lập thời gian nhắc nhở) .> (Đăng nhập) : <<include>>
+  (Tìm kiếm Task) .> (Đăng nhập) : <<include>>
+
+  (Quản lý người dùng) .> (Xem người dùng) : <<include>>
+
+}
+
+@enduml
