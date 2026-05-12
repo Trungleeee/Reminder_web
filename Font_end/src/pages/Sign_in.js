@@ -558,7 +558,8 @@ function AppRouter() {
   return (
     <Routes>
       {/* Guest-only routes */}
-        <Route index element={<SignIn />} />
+        <Route index element={<GuestRoute><SignIn /></GuestRoute>} />
+
         <Route path="register" element={<GuestRoute><SignUp /></GuestRoute>} />
         <Route path="forgot"   element={<GuestRoute><ForgotPassword /></GuestRoute>} />
         <Route path="reset"    element={<GuestRoute><ResetPassword /></GuestRoute>} />
