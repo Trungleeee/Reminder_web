@@ -7,12 +7,12 @@ import Admin from "../components/admin";
 import "./Sign_in.css";
 
 const firebaseApp = initializeApp({
-  apiKey: "AIzaSyAjglxTi3oP7ZNXW6IaiL5yRVXfVSKxakQ",
-  authDomain: "reminder-39fc5.firebaseapp.com",
-  projectId: "reminder-39fc5",
-  storageBucket: "reminder-39fc5.firebasestorage.app",
-  messagingSenderId: "580764158170",
-  appId: "1:580764158170:web:4e305438296b2a2d85bde3",
+  apiKey:            process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain:        process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId:         process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket:     process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             process.env.REACT_APP_FIREBASE_APP_ID,
 });
 
 const firebaseAuth = getAuth(firebaseApp);
@@ -20,7 +20,7 @@ const firebaseAuth = getAuth(firebaseApp);
 // ═══════════════════════════════════════════════════════════
 // AUTH CONTEXT
 // ═══════════════════════════════════════════════════════════
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = process.env.REACT_APP_API_URL;
 const AuthContext = createContext(null);
 
 function AuthProvider({ children }) {

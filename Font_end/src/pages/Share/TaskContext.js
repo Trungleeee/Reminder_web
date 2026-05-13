@@ -1,43 +1,42 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext,useCallback , useEffect, useState } from "react";
 import axios from "axios";
 
 const TaskContext = createContext();
-const API_URL = "http://localhost:5000/api";
+const API_URL = process.env.REACT_APP_API_URL;
 
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   const getAuthHeader = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 
-  const fetchTasks = async () => {
-    const token = localStorage.getItem("token");
-    if (!token || token === "undefined" || token === "null") return;
-    try {
-      setLoading(true);
-      const res = await axios.get(`${API_URL}/reminders`, getAuthHeader());
-      console.log("RAW reminder[0]:", res.data.reminders?.[0]);
-      const normalized = (res.data.reminders || []).map((t) => ({
-        id:          t._id,
-        title:       t.title || "",
-        description: t.description || "",
-        date:        t.date,
-        startTime:   t.startTime,
-        endTime:     t.endTime,
-        priority:    t.priority || "Medium",
-        category:    t.category || "work",
-        done:        t.status === "DONE",
-      }));
-
-      setTasks(normalized);
-    } catch (error) {
-      console.error("Lỗi fetch tasks:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchTasks = useCallback(async () => {
+  const token = localStorage.getItem("token");
+  if (!token || token === "undefined" || token === "null") return;
+  try {
+    setLoading(true);
+    const res = await axios.get(`${API_URL}/reminders`, getAuthHeader());
+    const normalized = (res.data.reminders || []).map((t) => ({
+      id:          t._id,
+      title:       t.title || "",
+      description: t.description || "",
+      date:        t.date,
+      startTime:   t.startTime,
+      endTime:     t.endTime,
+      priority:    t.priority || "Medium",
+      category:    t.category || "work",
+      done:        t.status === "DONE",
+    }));
+    setTasks(normalized);
+  } catch (error) {
+    console.error("Lỗi fetch tasks:", error);
+  } finally {
+    setLoading(false);
+  }
+}, []); 
 
   const addTask = async (data) => {
     
@@ -108,14 +107,20 @@ export function TaskProvider({ children }) {
       console.error("Lỗi xóa task:", error);
     }
   };
-
   useEffect(() => {
-  const token = localStorage.getItem("token");
-
-  if (token && token !== "undefined" && token !== "null") {
-    fetchTasks();
-  }
-}, [localStorage.getItem("token")]);
+  const handleAuthChange = () => {
+    setToken(localStorage.getItem("token"));
+  };
+  window.addEventListener("authChange", handleAuthChange);
+  return () => window.removeEventListener("authChange", handleAuthChange);
+  }, []);
+  useEffect(() => {
+      if (token && token !== "undefined" && token !== "null") {
+        fetchTasks();
+      } else {
+        setTasks([]); // clear khi logout
+      }
+  }, [token, fetchTasks]);
 
   return (
     <TaskContext.Provider value={{ tasks, loading, fetchTasks, addTask, deleteTask, toggleDone }}>
